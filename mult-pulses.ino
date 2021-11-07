@@ -19,8 +19,9 @@
 #define LED_TYPE    WS2811
 #define COLOR_ORDER GRB
 
-int pulseLocations[10];
 int pulseWidth = 5;
+int pulseLocLength = 30;
+int pulseLocations[30];
 int currentNumPulses = 0;
 int currentPulseIndex = 0;
 
@@ -91,6 +92,11 @@ void setup() {
   currentBlending = LINEARBLEND;
 
   startIndex = 0;
+
+  for( int i=0; i< pulseLocLength; i++){
+    pulseLocations[i] = -1; //-1 means can be filled
+    }
+    
   pinMode(A0, INPUT);
   Serial.begin(9600);
 }
@@ -103,17 +109,17 @@ void loop()
       pulseLocations[currentPulseIndex] = 0;
       currentNumPulses = currentNumPulses + 1;
     }
-    else if (currentNumPulses < 9) { //less than 9 pulses
+    else if (currentNumPulses < pulseLocLength - 1) { //less than 29 pulses
       if (pulseLocations[currentPulseIndex] >= 5) { //don't hit another pulse
         currentPulseIndex = currentPulseIndex + 1;
         pulseLocations[currentPulseIndex] = 0;
         currentNumPulses = currentNumPulses + 1;
       }
     }
-    else { //10 pulses
+    else { //max pulses : 30 pulses
       if (pulseLocations[currentPulseIndex] >= 5) { //don't hit another pulse
         int maxPulseIndex = 0; //highest pulse gets replaced
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < currentNumPulses; i++) {
           if (pulseLocations[i] > pulseLocations[maxPulseIndex]) {
             maxPulseIndex = i;
           }
@@ -123,24 +129,24 @@ void loop()
       }
     }
   }
-    FillLEDsFromPaletteColors(startIndex);
-    for (int i = 0; i < currentNumPulses; i++) {
-      SetLightPulse(pulseLocations[i], pulseWidth);
+  FillLEDsFromPaletteColors(startIndex);
+  for (int i = 0; i < currentNumPulses; i++) {
+    SetLightPulse(pulseLocations[i], pulseWidth);
+  }
+  FastLED.show();
+  for (int i = 0; i < currentNumPulses; i++) { //incrementing pulses
+    int pulseLocation = pulseLocations[i];
+    pulseLocations[i] = pulseLocation + 1;
+    if (pulseLocations[i] > 139) { //if at the end of the strip
+      pulseLocations[i] = NULL;
+      currentPulseIndex = i;
+      currentNumPulses = currentNumPulses - 1; //decrement number of pulses;
     }
-    FastLED.show();
-    for (int i = 0; i < currentNumPulses; i++) { //incrementing pulses
-      int pulseLocation = pulseLocations[i];
-      pulseLocations[i] = pulseLocation + 1;
-      if (pulseLocations[i]>139){ //if at the end of the strip
-        pulseLocations[i] = NULL;
-        currentPulseIndex = i;
-        currentNumPulses=currentNumPulses-1; //decrement number of pulses;
-        }
-    }
-    startIndex = startIndex + 1; //incrementing pallete index
-    FastLED.delay(1000 / UPDATES_PER_SECOND);
-    Serial.print("currentNumPulses: ");
-    Serial.println(currentNumPulses);
-    Serial.print("currentPulseIndex: ");
-    Serial.println(currentPulseIndex);
+  }
+  startIndex = startIndex + 1; //incrementing pallete index
+  FastLED.delay(1000 / UPDATES_PER_SECOND);
+  //Serial.print("currentNumPulses: ");
+  //Serial.println(currentNumPulses);
+  //Serial.print("currentPulseIndex: ");
+  //Serial.println(currentPulseIndex);
 }
