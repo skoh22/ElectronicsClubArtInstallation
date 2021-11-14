@@ -36,6 +36,7 @@ CRGB leds6[NUM_LEDS6];
 #define UPDATES_PER_SECOND 100
 
 CRGBPalette16 currentPalette;
+CRGBPalette16 winterPalette;
 TBlendType    currentBlending;
 static uint8_t startIndex;
 
@@ -46,7 +47,7 @@ void FillLEDsFromPaletteColors( uint8_t colorIndex)
 {
   uint8_t brightness = 255;
   for ( int i = 0; i < NUM_LEDS; i++) {
-    leds[i] = ColorFromPalette( currentPalette, colorIndex, brightness, currentBlending);
+    leds[i] = ColorFromPalette( winterPalette, colorIndex, brightness, currentBlending);
     leds2[i] = leds[i];
     leds3[i] = leds[i];
     leds4[i] = leds[i];
@@ -82,13 +83,22 @@ void setup() {
   FastLED.addLeds<LED_TYPE, LED_PIN6, COLOR_ORDER>(leds6, NUM_LEDS6).setCorrection( TypicalLEDStrip );
   FastLED.setBrightness(  BRIGHTNESS );
 
+//Fall Colors:
   CRGB yellow = CRGB(255, 0, 103);
   CRGB white = CRGB(255, 30, 130);
   CRGB red = CRGB(200, 0, 2);
   CRGB orange = CRGB(255, 0, 60);
   CRGB green = CRGB(0, 0, 255);
+//Winter Colors:
+  CRGB snowwhite = CRGB(250, 252, 255);
+  CRGB leafgreen = CRGB(0, 180, 255);
+  CRGB grayishblue = CRGB(0, 240, 50);
+  CRGB cyan = CRGB(156, 255, 241);
+  CRGB palepurple = CRGB(182, 190, 100);
+  
 
   currentPalette = CRGBPalette16(white, white, red, red, yellow, yellow, green, orange, orange, orange, red, orange, yellow, yellow, orange, red);
+  winterPalette = CRGBPalette16(snowwhite, snowwhite, leafgreen, leafgreen, grayishblue, grayishblue, cyan, palepurple, palepurple, palepurple, leafgreen, palepurple, grayishblue, grayishblue, palepurple, leafgreen);
   currentBlending = LINEARBLEND;
 
   startIndex = 0;
