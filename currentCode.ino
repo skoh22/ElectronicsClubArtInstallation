@@ -9,9 +9,9 @@
 #define LED_PIN6    8
 
 #define NUM_LEDS    150
-#define NUM_LEDS2   144
-#define NUM_LEDS3   144
-#define NUM_LEDS4   144
+#define NUM_LEDS2   150
+#define NUM_LEDS3   150
+#define NUM_LEDS4   150
 #define NUM_LEDS5   150
 #define NUM_LEDS6   150
 
@@ -115,6 +115,8 @@ void loop()
 {
   int sensorVal = analogRead(A0);
   if (sensorVal > 400) { //sensor is triggered, want to update pulse arrays
+    //Serial.print("sensorVal: ");
+    //Serial.println(sensorVal);
     if (currentNumPulses == 0) { //no pulses on the strip
       pulseLocations[0] = 0;
       prevPulseIndex = 0;
